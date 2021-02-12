@@ -12,3 +12,7 @@ module.exports = {
   server: resolve('src/server'),
   sfc: resolve('src/sfc')
 }
+
+/**
+ * src下的主要文件进行映射
+ */

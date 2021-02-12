@@ -9,8 +9,14 @@ if (!fs.existsSync('dist')) {
 }
 
 let builds = require('./config').getAllBuilds()
-
-// filter builds via command line arg
+// filter builds via command line arg 
+/**
+ * process是一个全局变量，它提供当前nodejs进程相关的消息
+ * process.argv 是一个数组，这个数组包含了启动Node.js进程时的命令行参数
+ *    第一个元素为process.execPath ---> Node.js进程的可执行文件的绝对路径
+ *    第二个元素是正被执行的 JavaScript 文件的路径
+ *    
+ */
 if (process.argv[2]) {
   const filters = process.argv[2].split(',')
   builds = builds.filter(b => {
@@ -96,3 +102,7 @@ function logError (e) {
 function blue (str) {
   return '\x1b[1m\x1b[34m' + str + '\x1b[39m\x1b[22m'
 }
+
+/**
+ * 在执行了npm run build 之后就会执行build.js文件
+ */

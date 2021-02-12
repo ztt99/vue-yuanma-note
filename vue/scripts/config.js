@@ -9,7 +9,7 @@ const version = process.env.VERSION || require('../package.json').version
 const weexVersion = process.env.WEEX_VERSION || require('../packages/weex-vue-framework/package.json').version
 const featureFlags = require('./feature-flags')
 
-const banner =
+const banner =  //dist中的头部的注释
   '/*!\n' +
   ` * Vue.js v${version}\n` +
   ` * (c) 2014-${new Date().getFullYear()} Evan You\n` +
@@ -245,11 +245,11 @@ function genConfig (name) {
   Object.keys(featureFlags).forEach(key => {
     vars[`process.env.${key}`] = featureFlags[key]
   })
-  // build-specific env
+  // build-specific env  打包中具体的env
   if (opts.env) {
     vars['process.env.NODE_ENV'] = JSON.stringify(opts.env)
   }
-  config.plugins.push(replace(vars))
+  config.plugins.push(replace(vars))  //变量替换，可以将动态设置的变量提取出来在配置文件中设置，在文件中可以使用vars中的变量
 
   if (opts.transpile !== false) {
     config.plugins.push(buble())
