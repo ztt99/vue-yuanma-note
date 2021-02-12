@@ -124,6 +124,7 @@ const builds = {
     entry: resolve('web/entry-runtime-with-compiler.js'),
     dest: resolve('dist/vue.js'),
     format: 'umd',
+    sourceMap: true,
     env: 'development',
     alias: { he: './entity-decoder' },
     banner
