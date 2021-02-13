@@ -23,11 +23,15 @@
 - renderMixin
 
 1. 在Vue实例上挂载_render方法
-2. 内部调用options上的render，传入vm.$createElement===(render(h){})，返回vnode
+2. 内部调用options上的render，传入vm.$createElement===render(h){}中的h，返回vnode
 
 - vm.$createElement
 
-1. 调用_createElement,如果传入的属性数据是
+1. 调用_createElement  返回vnode
+2. 传入的vnode属性数据不可以是响应式
+3. 自己传入的render函数。简单数据类型：返回text类型的vnode。复杂数据类型：返回一个vnode的数组
+
+
 
 
 

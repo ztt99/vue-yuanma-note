@@ -2349,6 +2349,7 @@
   // normalization is needed - if any child is an Array, we flatten the whole
   // thing with Array.prototype.concat. It is guaranteed to be only 1-level deep
   // because functional components already normalize their own children.
+  // 对于自己生成的vnode，展平一层即可
   function simpleNormalizeChildren (children) {
     for (var i = 0; i < children.length; i++) {
       if (Array.isArray(children[i])) {
@@ -2363,7 +2364,7 @@
   // with hand-written render functions / JSX. In such cases a full normalization
   // is needed to cater to all possible types of children values.
   function normalizeChildren (children) {
-    return isPrimitive(children)
+    return isPrimitive(children) //如果是简单数据类型
       ? [createTextVNode(children)]
       : Array.isArray(children)
         ? normalizeArrayChildren(children)
@@ -2373,7 +2374,13 @@
   function isTextNode (node) {
     return isDef(node) && isDef(node.text) && isFalse(node.isComment)
   }
-
+  /**
+   * 
+   * @param {*} children 
+   * @param {*} nestedIndex 
+   * 将传入的children，拍平返回一个数组
+   * 对于用户自己传入的需要考虑多种情况
+   */
   function normalizeArrayChildren (children, nestedIndex) {
     var res = [];
     var i, c, lastIndex, last;
@@ -2382,8 +2389,9 @@
       if (isUndef(c) || typeof c === 'boolean') { continue }
       lastIndex = res.length - 1;
       last = res[lastIndex];
-      //  nested
+      //  nestedd
       if (Array.isArray(c)) {
+
         if (c.length > 0) {
           c = normalizeArrayChildren(c, ((nestedIndex || '') + "_" + i));
           // merge adjacent text nodes
@@ -3346,13 +3354,13 @@
     normalizationType,
     alwaysNormalize
   ) {
-    if (Array.isArray(data) || isPrimitive(data)) {
+    if (Array.isArray(data) || isPrimitive(data)) {  //参数重载，
       normalizationType = children;
       children = data;
       data = undefined;
     }
-    if (isTrue(alwaysNormalize)) {
-      normalizationType = ALWAYS_NORMALIZE;
+    if (isTrue(alwaysNormalize)) { //自己写的render函数
+      normalizationType = ALWAYS_NORMALIZE;  //总是规范化
     }
     return _createElement(context, tag, data, children, normalizationType)
   }
@@ -3364,13 +3372,13 @@
     children,
     normalizationType
   ) {
-    if (isDef(data) && isDef((data).__ob__)) {
+    if (isDef(data) && isDef((data).__ob__)) {  //数据不可是响应式
        warn(
         "Avoid using observed data object as vnode data: " + (JSON.stringify(data)) + "\n" +
         'Always create fresh vnode data objects in each render!',
         context
       );
-      return createEmptyVNode()
+      return createEmptyVNode()  //注释vnode
     }
     // object syntax in v-bind
     if (isDef(data) && isDef(data.is)) {
@@ -3382,7 +3390,7 @@
     }
     // warn against non-primitive key
     if (
-      isDef(data) && isDef(data.key) && !isPrimitive(data.key)
+      isDef(data) && isDef(data.key) && !isPrimitive(data.key)  //如果key不是一个基础类型
     ) {
       {
         warn(
@@ -3393,7 +3401,7 @@
       }
     }
     // support single function children as default scoped slot
-    if (Array.isArray(children) &&
+    if (Array.isArray(children) &&  //处理slot
       typeof children[0] === 'function'
     ) {
       data = data || {};

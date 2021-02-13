@@ -1,24 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
 </head>
+
 <body>
-  <div id="app">121212{{a}}</div>
+  <div id="app">
+
+    <span>{{a}}</span>
+    <span>{{a}}</span>
+  </div>
   <script src="./vue.js"></script>
   <script>
 
     const vm = new Vue({
-      el:'#app',
-      data(){
+      el: '#app',
+      render(createElement) {
+        return createElement(
+          'div',
+          {
+            attrs:{
+              id:'app'
+            }
+          },
+          [
+            createElement('h1', '一则头条'),
+            [
+            createElement('div', '*******'),
+            ]
+          ]
+        )
+      },
+      data() {
         return {
-          a:'a'
+          a: 'a'
         }
       }
     })
   </script>
 </body>
+
 </html>

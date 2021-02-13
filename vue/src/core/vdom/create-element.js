@@ -33,13 +33,13 @@ export function createElement (
   normalizationType: any,
   alwaysNormalize: boolean
 ): VNode | Array<VNode> {
-  if (Array.isArray(data) || isPrimitive(data)) {
+  if (Array.isArray(data) || isPrimitive(data)) {  //参数重载，
     normalizationType = children
     children = data
     data = undefined
   }
-  if (isTrue(alwaysNormalize)) {
-    normalizationType = ALWAYS_NORMALIZE
+  if (isTrue(alwaysNormalize)) { //自己写的render函数
+    normalizationType = ALWAYS_NORMALIZE  //总是规范化
   }
   return _createElement(context, tag, data, children, normalizationType)
 }
@@ -51,13 +51,13 @@ export function _createElement (
   children?: any,
   normalizationType?: number
 ): VNode | Array<VNode> {
-  if (isDef(data) && isDef((data: any).__ob__)) {
+  if (isDef(data) && isDef((data: any).__ob__)) {  //数据不可是响应式
     process.env.NODE_ENV !== 'production' && warn(
       `Avoid using observed data object as vnode data: ${JSON.stringify(data)}\n` +
       'Always create fresh vnode data objects in each render!',
       context
     )
-    return createEmptyVNode()
+    return createEmptyVNode()  //注释vnode
   }
   // object syntax in v-bind
   if (isDef(data) && isDef(data.is)) {
@@ -69,7 +69,7 @@ export function _createElement (
   }
   // warn against non-primitive key
   if (process.env.NODE_ENV !== 'production' &&
-    isDef(data) && isDef(data.key) && !isPrimitive(data.key)
+    isDef(data) && isDef(data.key) && !isPrimitive(data.key)  //如果key不是一个基础类型
   ) {
     if (!__WEEX__ || !('@binding' in data.key)) {
       warn(
@@ -80,7 +80,7 @@ export function _createElement (
     }
   }
   // support single function children as default scoped slot
-  if (Array.isArray(children) &&
+  if (Array.isArray(children) &&  //处理slot
     typeof children[0] === 'function'
   ) {
     data = data || {}
