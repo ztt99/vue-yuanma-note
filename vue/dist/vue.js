@@ -5855,7 +5855,6 @@
   function createPatchFunction (backend) {
     var i, j;
     var cbs = {};
-
     var modules = backend.modules;
     var nodeOps = backend.nodeOps;
 
@@ -5949,7 +5948,7 @@
           }
         }
 
-        vnode.elm = vnode.ns
+        vnode.elm = vnode.ns  
           ? nodeOps.createElementNS(vnode.ns, tag)
           : nodeOps.createElement(tag, vnode);
         setScope(vnode);
@@ -5960,7 +5959,7 @@
           if (isDef(data)) {
             invokeCreateHooks(vnode, insertedVnodeQueue);
           }
-          insert(parentElm, vnode.elm, refElm);
+          insert(parentElm, vnode.elm, refElm);  //使用createElement将vnode生成为dom后替换原先的dom元素
         }
 
         if ( data && data.pre) {
@@ -6468,8 +6467,9 @@
     }
 
     return function patch (oldVnode, vnode, hydrating, removeOnly) {
-      if (isUndef(vnode)) {
-        if (isDef(oldVnode)) { invokeDestroyHook(oldVnode); }
+      //删除时的逻辑
+      if (isUndef(vnode)) { //是undefined
+        if (isDef(oldVnode)) { invokeDestroyHook(oldVnode); } //不是undefined
         return
       }
 
@@ -6481,7 +6481,7 @@
         isInitialPatch = true;
         createElm(vnode, insertedVnodeQueue);
       } else {
-        var isRealElement = isDef(oldVnode.nodeType);
+        var isRealElement = isDef(oldVnode.nodeType); //是真是DOM
         if (!isRealElement && sameVnode(oldVnode, vnode)) {
           // patch existing root node
           patchVnode(oldVnode, vnode, insertedVnodeQueue, null, null, removeOnly);
@@ -6490,7 +6490,7 @@
             // mounting to a real element
             // check if this is server-rendered content and if we can perform
             // a successful hydration.
-            if (oldVnode.nodeType === 1 && oldVnode.hasAttribute(SSR_ATTR)) {
+            if (oldVnode.nodeType === 1 && oldVnode.hasAttribute(SSR_ATTR)) { //服务端渲染
               oldVnode.removeAttribute(SSR_ATTR);
               hydrating = true;
             }
@@ -6510,12 +6510,12 @@
             }
             // either not server-rendered, or hydration failed.
             // create an empty node and replace it
-            oldVnode = emptyNodeAt(oldVnode);
+            oldVnode = emptyNodeAt(oldVnode); //真实的dom转化为vnode
           }
 
           // replacing existing element
-          var oldElm = oldVnode.elm;
-          var parentElm = nodeOps.parentNode(oldElm);
+          var oldElm = oldVnode.elm;  //app
+          var parentElm = nodeOps.parentNode(oldElm); //body
 
           // create new node
           createElm(
@@ -8457,7 +8457,10 @@
   // the directive module should be applied last, after all
   // built-in modules have been applied.
   var modules = platformModules.concat(baseModules);
-
+  /**
+   * nodeOps处理dom的方法
+   * modules处理属性的方法和ref，derective
+   */
   var patch = createPatchFunction({ nodeOps: nodeOps, modules: modules });
 
   /**
