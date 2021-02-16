@@ -17,6 +17,10 @@ export function initExtend (Vue: GlobalAPI) {
    * Class inheritance
    */
   Vue.extend = function (extendOptions: Object): Function {
+    /**
+     * 返回一个Sub构造函数，内部调用Vue实例上的_init，函数内部merge了Vue.options，将Vue的一些方法挂载到Sub组件上，并将原型指向Vue.prototype
+     * 将Vue挂载到组件的super上
+     */
     extendOptions = extendOptions || {}
     const Super = this
     const SuperId = Super.cid
@@ -37,7 +41,7 @@ export function initExtend (Vue: GlobalAPI) {
     Sub.prototype.constructor = Sub
     Sub.cid = cid++
     Sub.options = mergeOptions(
-      Super.options,
+      Super.options,  //Vue.options
       extendOptions
     )
     Sub['super'] = Super
@@ -59,6 +63,7 @@ export function initExtend (Vue: GlobalAPI) {
 
     // create asset registers, so extended classes
     // can have their private assets too.
+    // component,directive,filter 子组件继承父组件
     ASSET_TYPES.forEach(function (type) {
       Sub[type] = Super[type]
     })

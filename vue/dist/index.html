@@ -17,23 +17,13 @@
   <script src="./vue.js"></script>
   <script>
 
+
     const vm = new Vue({
       el: '#app',
-      render(createElement) {
-        return createElement(
-          'div',
-          {
-            attrs:{
-              id:'app'
-            }
-          },
-          [
-            createElement('h1', '一则头条'),
-            [
-            createElement('div', '*******'),
-            ]
-          ]
-        )
+      render(h) {
+        return h('div',{attrs:{
+          id:'app'
+        }},'nihaohao')
       },
       data() {
         return {

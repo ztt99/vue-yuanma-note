@@ -93,7 +93,7 @@ export function _createElement (
     children = simpleNormalizeChildren(children)
   }
   let vnode, ns
-  if (typeof tag === 'string') {
+  if (typeof tag === 'string') { //原生dom
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
     if (config.isReservedTag(tag)) {
@@ -122,7 +122,13 @@ export function _createElement (
     }
   } else {
     // direct component options / constructor
-    vnode = createComponent(tag, data, context, children)
+    /**
+     * tag:组件
+     * data:undefined
+     * context:上下文
+     * children:undefined
+    */
+    vnode = createComponent(tag, data, context, children)  
   }
   if (Array.isArray(vnode)) {
     return vnode

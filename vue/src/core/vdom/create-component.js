@@ -46,8 +46,9 @@ const componentVNodeHooks = {
     } else {
       const child = vnode.componentInstance = createComponentInstanceForVnode(
         vnode,
-        activeInstance
+        activeInstance  //当前实例
       )
+      // child 子组件实例
       child.$mount(hydrating ? vnode.elm : undefined, hydrating)
     }
   },
@@ -95,7 +96,9 @@ const componentVNodeHooks = {
     }
   }
 }
-
+/**
+ * hooksToMerge  
+ */
 const hooksToMerge = Object.keys(componentVNodeHooks)
 
 export function createComponent (
@@ -109,7 +112,7 @@ export function createComponent (
     return
   }
 
-  const baseCtor = context.$options._base
+  const baseCtor = context.$options._base  //Vue
 
   // plain options object: turn it into a constructor
   if (isObject(Ctor)) {
@@ -150,7 +153,7 @@ export function createComponent (
   // component constructor creation
   resolveConstructorOptions(Ctor)
 
-  // transform component v-model data into props & events
+  // transform component v-model data into props & events  v-model的判断
   if (isDef(data.model)) {
     transformModel(Ctor.options, data)
   }
@@ -183,15 +186,19 @@ export function createComponent (
   }
 
   // install component management hooks onto the placeholder node
-  installComponentHooks(data)
+  installComponentHooks(data)  //merge hook 组件中以及data中
 
   // return a placeholder vnode
   const name = Ctor.options.name || tag
   const vnode = new VNode(
     `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,
-    data, undefined, undefined, undefined, context,
-    { Ctor, propsData, listeners, tag, children },
-    asyncFactory
+    data,
+    undefined, //children 组件没有children
+    undefined, //text
+    undefined, //elm
+    context, //上下文
+    { Ctor, propsData, listeners, tag, children }, //componentOptions
+    asyncFactory //Factory 工厂
   )
 
   // Weex specific: invoke recycle-list optimized @render function for
@@ -207,9 +214,9 @@ export function createComponent (
 
 export function createComponentInstanceForVnode (
   // we know it's MountedComponentVNode but flow doesn't
-  vnode: any,
+  vnode: any,  //appVnode
   // activeInstance in lifecycle state
-  parent: any
+  parent: any //vm
 ): Component {
   const options: InternalComponentOptions = {
     _isComponent: true,
@@ -227,10 +234,10 @@ export function createComponentInstanceForVnode (
 
 function installComponentHooks (data: VNodeData) {
   const hooks = data.hook || (data.hook = {})
-  for (let i = 0; i < hooksToMerge.length; i++) {
+  for (let i = 0; i < hooksToMerge.length; i++) {  // hooksToMerge钩子函数
     const key = hooksToMerge[i]
-    const existing = hooks[key]
-    const toMerge = componentVNodeHooks[key]
+    const existing = hooks[key] //data中的hook
+    const toMerge = componentVNodeHooks[key] //组件上的hook
     if (existing !== toMerge && !(existing && existing._merged)) {
       hooks[key] = existing ? mergeHook(toMerge, existing) : toMerge
     }

@@ -239,6 +239,7 @@
   /**
    * Mix properties into target object.
    */
+
   function extend (to, _from) {
     for (var key in _from) {
       to[key] = _from[key];
@@ -3123,8 +3124,9 @@
       } else {
         var child = vnode.componentInstance = createComponentInstanceForVnode(
           vnode,
-          activeInstance
+          activeInstance  //当前实例
         );
+        // child 子组件实例
         child.$mount(hydrating ? vnode.elm : undefined, hydrating);
       }
     },
@@ -3173,7 +3175,9 @@
       }
     }
   };
-
+  /**
+   * hooksToMerge  
+   */
   var hooksToMerge = Object.keys(componentVNodeHooks);
 
   function createComponent (
@@ -3187,7 +3191,7 @@
       return
     }
 
-    var baseCtor = context.$options._base;
+    var baseCtor = context.$options._base;  //Vue
 
     // plain options object: turn it into a constructor
     if (isObject(Ctor)) {
@@ -3228,7 +3232,7 @@
     // component constructor creation
     resolveConstructorOptions(Ctor);
 
-    // transform component v-model data into props & events
+    // transform component v-model data into props & events  v-model的判断
     if (isDef(data.model)) {
       transformModel(Ctor.options, data);
     }
@@ -3261,15 +3265,19 @@
     }
 
     // install component management hooks onto the placeholder node
-    installComponentHooks(data);
+    installComponentHooks(data);  //merge hook 组件中以及data中
 
     // return a placeholder vnode
     var name = Ctor.options.name || tag;
     var vnode = new VNode(
       ("vue-component-" + (Ctor.cid) + (name ? ("-" + name) : '')),
-      data, undefined, undefined, undefined, context,
-      { Ctor: Ctor, propsData: propsData, listeners: listeners, tag: tag, children: children },
-      asyncFactory
+      data,
+      undefined, //children 组件没有children
+      undefined, //text
+      undefined, //elm
+      context, //上下文
+      { Ctor: Ctor, propsData: propsData, listeners: listeners, tag: tag, children: children }, //componentOptions
+      asyncFactory //Factory 工厂
     );
 
     return vnode
@@ -3277,9 +3285,9 @@
 
   function createComponentInstanceForVnode (
     // we know it's MountedComponentVNode but flow doesn't
-    vnode,
+    vnode,  //appVnode
     // activeInstance in lifecycle state
-    parent
+    parent //vm
   ) {
     var options = {
       _isComponent: true,
@@ -3297,10 +3305,10 @@
 
   function installComponentHooks (data) {
     var hooks = data.hook || (data.hook = {});
-    for (var i = 0; i < hooksToMerge.length; i++) {
+    for (var i = 0; i < hooksToMerge.length; i++) {  // hooksToMerge钩子函数
       var key = hooksToMerge[i];
-      var existing = hooks[key];
-      var toMerge = componentVNodeHooks[key];
+      var existing = hooks[key]; //data中的hook
+      var toMerge = componentVNodeHooks[key]; //组件上的hook
       if (existing !== toMerge && !(existing && existing._merged)) {
         hooks[key] = existing ? mergeHook$1(toMerge, existing) : toMerge;
       }
@@ -3414,7 +3422,7 @@
       children = simpleNormalizeChildren(children);
     }
     var vnode, ns;
-    if (typeof tag === 'string') {
+    if (typeof tag === 'string') { //原生dom
       var Ctor;
       ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag);
       if (config.isReservedTag(tag)) {
@@ -3443,7 +3451,13 @@
       }
     } else {
       // direct component options / constructor
-      vnode = createComponent(tag, data, context, children);
+      /**
+       * tag:组件
+       * data:undefined
+       * context:上下文
+       * children:undefined
+      */
+      vnode = createComponent(tag, data, context, children);  
     }
     if (Array.isArray(vnode)) {
       return vnode
@@ -3546,7 +3560,7 @@
 
       // set parent vnode. this allows render functions to have access
       // to the data on the placeholder node.
-      vm.$vnode = _parentVnode;
+      vm.$vnode = _parentVnode;  //占位符vnode
       // render self
       var vnode;
       try {
@@ -3940,11 +3954,12 @@
 
   function lifecycleMixin (Vue) {
     Vue.prototype._update = function (vnode, hydrating) {
+      debugger
       var vm = this;
       var prevEl = vm.$el;
       var prevVnode = vm._vnode;
       var restoreActiveInstance = setActiveInstance(vm);
-      vm._vnode = vnode;
+      vm._vnode = vnode; //渲染vnode
       // Vue.prototype.__patch__ is injected in entry points
       // based on the rendering backend used.
       if (!prevVnode) {
@@ -5025,8 +5040,8 @@
   function initInternalComponent (vm, options) {
     var opts = vm.$options = Object.create(vm.constructor.options);
     // doing this because it's faster than dynamic enumeration.
-    var parentVnode = options._parentVnode;
-    opts.parent = options.parent;
+    var parentVnode = options._parentVnode; //组件占位
+    opts.parent = options.parent; //组件实例
     opts._parentVnode = parentVnode;
 
     var vnodeComponentOptions = parentVnode.componentOptions;
@@ -5139,6 +5154,10 @@
      * Class inheritance
      */
     Vue.extend = function (extendOptions) {
+      /**
+       * 返回一个Sub构造函数，内部调用Vue实例上的_init，函数内部merge了Vue.options，将Vue的一些方法挂载到Sub组件上，并将原型指向Vue.prototype
+       * 将Vue挂载到组件的super上
+       */
       extendOptions = extendOptions || {};
       var Super = this;
       var SuperId = Super.cid;
@@ -5159,7 +5178,7 @@
       Sub.prototype.constructor = Sub;
       Sub.cid = cid++;
       Sub.options = mergeOptions(
-        Super.options,
+        Super.options,  //Vue.options
         extendOptions
       );
       Sub['super'] = Super;
@@ -5181,6 +5200,7 @@
 
       // create asset registers, so extended classes
       // can have their private assets too.
+      // component,directive,filter 子组件继承父组件
       ASSET_TYPES.forEach(function (type) {
         Sub[type] = Super[type];
       });
@@ -5926,7 +5946,7 @@
       }
 
       vnode.isRootInsert = !nested; // for transition enter check
-      if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
+      if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {  //创建组件
         return
       }
 
@@ -5975,11 +5995,11 @@
     }
 
     function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
-      var i = vnode.data;
+      var i = vnode.data;  //在create-component文件中创建组件vnode时，将data merge了
       if (isDef(i)) {
-        var isReactivated = isDef(vnode.componentInstance) && i.keepAlive;
-        if (isDef(i = i.hook) && isDef(i = i.init)) {
-          i(vnode, false /* hydrating */);
+        var isReactivated = isDef(vnode.componentInstance) && i.keepAlive;  //keep-alive 组件
+        if (isDef(i = i.hook) && isDef(i = i.init)) { //存在hook和init
+          i(vnode, false /* hydrating */);  //调用init
         }
         // after calling the init hook, if the vnode is a child component
         // it should've created a child instance and mounted it. the child

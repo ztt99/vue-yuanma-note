@@ -140,7 +140,7 @@ export function createPatchFunction (backend) {
     }
 
     vnode.isRootInsert = !nested // for transition enter check
-    if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
+    if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {  //创建组件
       return
     }
 
@@ -207,11 +207,11 @@ export function createPatchFunction (backend) {
   }
 
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
-    let i = vnode.data
+    let i = vnode.data  //在create-component文件中创建组件vnode时，将data merge了
     if (isDef(i)) {
-      const isReactivated = isDef(vnode.componentInstance) && i.keepAlive
-      if (isDef(i = i.hook) && isDef(i = i.init)) {
-        i(vnode, false /* hydrating */)
+      const isReactivated = isDef(vnode.componentInstance) && i.keepAlive  //keep-alive 组件
+      if (isDef(i = i.hook) && isDef(i = i.init)) { //存在hook和init
+        i(vnode, false /* hydrating */)  //调用init
       }
       // after calling the init hook, if the vnode is a child component
       // it should've created a child instance and mounted it. the child
